@@ -14,16 +14,15 @@ public class SubmissionPanelHandler : MonoBehaviour, IPanelHandler
 
     public bool IsActive { get => isActive; }
 
-    public void TogglePanel()
-    {
-        isActive = !isActive;
-
-        gameObject.SetActive(isActive);
-    }
-
     private void Start()
     {
         TogglePanel();
+    }
+
+    public void TogglePanel(bool refreshFields = false)
+    {
+        isActive = !isActive;
+        gameObject.SetActive(isActive);
     }
 
     public void PopulateIssueCategories(string[] categories)

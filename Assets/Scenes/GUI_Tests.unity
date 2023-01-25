@@ -2113,6 +2113,8 @@ MonoBehaviour:
   cpuField: {fileID: 519680231}
   ramField: {fileID: 742761155}
   svgaField: {fileID: 1122603683}
+  backButton: {fileID: 1212151542}
+  saveButton: {fileID: 250853138}
 --- !u!1 &710628442
 GameObject:
   m_ObjectHideFlags: 0
@@ -2148,7 +2150,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -7.4999847, y: -0.5}
+  m_AnchoredPosition: {x: -7.4999695, y: -0.5}
   m_SizeDelta: {x: -35, y: -13}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &710628444

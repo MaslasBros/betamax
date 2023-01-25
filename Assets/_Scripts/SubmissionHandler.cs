@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class NewBehaviourScript : MonoBehaviour
+public class SubmissionHandler : MonoBehaviour
 {
     [Header("Submitter settings")]
     [SerializeField] KeyCode submitPanelKey;
@@ -24,11 +24,13 @@ public class NewBehaviourScript : MonoBehaviour
         if (Input.GetKeyDown(submitPanelKey))
         {
             submissionPanel.TogglePanel();
+            if (configPanel.IsActive) configPanel.TogglePanel();
         }
 
         if (Input.GetKeyDown(configPanelKey))
         {
-            configPanel.TogglePanel();
+            configPanel.TogglePanel(true);
+            if (submissionPanel.IsActive) submissionPanel.TogglePanel();
         }
     }
 
