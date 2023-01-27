@@ -11,7 +11,6 @@ public class SubmissionPanelHandler : MonoBehaviour, IPanelHandler
     [SerializeField] Button submitButton;
 
     bool isActive = true;
-
     public bool IsActive { get => isActive; }
 
     private void Start()
