@@ -8,6 +8,8 @@ namespace BetaMax.UI
 
     using BetaMax.Core;
     using BetaMax.Core.IO;
+    using System.Text.RegularExpressions;
+    using System;
 
     public class ConfigPanelHandler : MonoBehaviour, IPanelHandler
     {
@@ -37,12 +39,17 @@ namespace BetaMax.UI
         string jsonFileName = "testerInfo.json";
         string infoSavePathFinal = string.Empty;
 
+        Color cCache;
+        Color testerColorCache;
+
         bool isActive = true;
         public bool IsActive { get => isActive; }
 
+        public string OptionalFilesPath => optionalsPathField.text;
+
         private void Awake()
         {
-            infoSavePathFinal = Path.Combine(infoSavePath, jsonFileName);
+            infoSavePathFinal = Path.Combine(infoSavePath, SubmissionHandler.S.TEMP_FOLDER_NAME, jsonFileName);
 
             AssignBackButtonMethod(ref backButton);
             AssignSaveButtonMethod(ref saveButton);
@@ -57,11 +64,17 @@ namespace BetaMax.UI
         ///<summary>Adds SerializeFieldsToJSON(...) as an onClick method to the save button.</summary>
         void AssignSaveButtonMethod(ref Button saveButton)
         {
-            saveButton.onClick.AddListener(() => SerializeFieldsToJSON(infoSavePathFinal));
+            saveButton.onClick.AddListener(() => SaveButtonCallback());
         }
 
         private void Start()
         {
+            if (optionalsPathField != null)
+            { cCache = optionalsPathField.image.color; }
+
+            if (betaTester != null)
+            { testerColorCache = betaTester.image.color; }
+
             PopulateInputFields();
 
             //For initial data creation
@@ -155,6 +168,48 @@ namespace BetaMax.UI
             tInfo.svgaField = svgaField.text;
 
             Debug.Log("Serialization result:" + InfoSerialization.SerializeTesterInfo(tInfo, infoSavePath));
+        }
+
+        void SaveButtonCallback()
+        {
+            if (ValidateTesterName(betaTester.text) & ValidateOptionalsPath(optionalsPathField.text))
+            { SerializeFieldsToJSON(infoSavePathFinal); }
+        }
+
+        bool ValidateTesterName(string input)
+        {
+            if (String.IsNullOrEmpty(input) || String.IsNullOrWhiteSpace(input))
+            {
+                betaTester.image.color = Color.red;
+                return false;
+            }
+
+            betaTester.image.color = testerColorCache;
+            return true;
+        }
+
+        ///<summary>Call to validate the optionals path input field text.</summary>
+        bool ValidateOptionalsPath(string inputPath)
+        {
+            if (String.IsNullOrEmpty(inputPath) || String.IsNullOrWhiteSpace(inputPath))
+            {
+                optionalsPathField.image.color = cCache;
+                return true;
+            }
+
+            string lastChar = inputPath.ToCharArray()[inputPath.Length - 1].ToString();
+
+            if (Regex.IsMatch(lastChar, @"[^A-Za-z0-9\s]")
+                    || !Directory.Exists(inputPath))
+            {
+                optionalsPathField.image.color = Color.red;
+                return false;
+            }
+            else
+            {
+                optionalsPathField.image.color = cCache;
+                return true;
+            }
         }
     }
 }

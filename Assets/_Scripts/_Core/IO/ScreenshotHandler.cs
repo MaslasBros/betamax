@@ -5,7 +5,7 @@ namespace BetaMax.Core.IO
 
     public class ScreenshotHandler : MonoBehaviour
     {
-        string tempFolderName = "SubTemp";
+        //string tempFolderName = "SubTemp";
         string tempFolderPath = Application.dataPath;
         string screenshotName = "scrIssue.jpg";
         string tempFolderFinalPath = string.Empty;
@@ -14,7 +14,7 @@ namespace BetaMax.Core.IO
 
         private void Awake()
         {
-            tempFolderFinalPath = tempFolderFinalPath = Path.Combine(tempFolderPath, tempFolderName);
+            tempFolderFinalPath = tempFolderFinalPath = Path.Combine(tempFolderPath, SubmissionHandler.S.TEMP_FOLDER_NAME);
             if (!Directory.Exists(tempFolderFinalPath))
             { Directory.CreateDirectory(tempFolderFinalPath); }
         }
