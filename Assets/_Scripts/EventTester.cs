@@ -28,8 +28,11 @@ public class EventTester : MonoBehaviour
 
     private void OnDestroy()
     {
-        SubmissionHandler.S.onIssueCommited -= OnIssueCommit;
-        SubmissionHandler.S.onIssuePause -= OnIssuePause;
-        SubmissionHandler.S.AuxProccess = null;
+        if (SubmissionHandler.S != null)
+        {
+            SubmissionHandler.S.onIssueCommited -= OnIssueCommit;
+            SubmissionHandler.S.onIssuePause -= OnIssuePause;
+            SubmissionHandler.S.AuxProccess = null;
+        }
     }
 }

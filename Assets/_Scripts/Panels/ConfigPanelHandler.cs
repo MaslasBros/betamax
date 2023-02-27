@@ -36,7 +36,6 @@ namespace BetaMax.UI
         string downloadPath, optionalsPath;
 
         string infoSavePath = Application.dataPath;
-        string jsonFileName = "testerInfo.json";
         string infoSavePathFinal = string.Empty;
 
         Color cCache;
@@ -46,10 +45,11 @@ namespace BetaMax.UI
         public bool IsActive { get => isActive; }
 
         public string OptionalFilesPath => optionalsPathField.text;
+        public string DownloadsPathField => downloadsPathField.text;
 
         private void Awake()
         {
-            infoSavePathFinal = Path.Combine(infoSavePath, SubmissionHandler.S.TEMP_FOLDER_NAME, jsonFileName);
+            infoSavePathFinal = Path.Combine(infoSavePath, SubmissionHandler.S.TEMP_FOLDER_NAME, SubmissionHandler.S.JSON_FILE_NAME);
 
             AssignBackButtonMethod(ref backButton);
             AssignSaveButtonMethod(ref saveButton);
