@@ -1,12 +1,14 @@
 namespace BetaMax.Core
 {
     using System;
+    using System.IO;
+    using System.Threading.Tasks;
+
     using UnityEngine;
 
     using BetaMax.UI;
     using BetaMax.Core.IO;
-    using System.IO;
-    using System.Threading.Tasks;
+    using BetaMax.Posts;
 
     public class SubmissionHandler : MonoBehaviour
     {
@@ -35,6 +37,7 @@ namespace BetaMax.Core
         [SerializeField] ConfigPanelHandler configPanel;
 
         ScreenshotHandler screenshotHandler;
+        //PostHandler postHandler;
 
         public string[] IssueCategories => (string[])issueCategories.Clone();
 
@@ -61,6 +64,7 @@ namespace BetaMax.Core
         private void Awake()
         {
             S = this;
+
             screenshotHandler = gameObject.AddComponent<ScreenshotHandler>();
         }
 
@@ -79,14 +83,23 @@ namespace BetaMax.Core
         #region SUBMISSION_SEQUENCE
         void PackagingSequence()
         {
-            string userJsonFolder = Path.Combine(Application.dataPath, TEMP_FOLDER_NAME, JSON_FILE_NAME);
+            string userJsonPath = Path.Combine(Application.dataPath, TEMP_FOLDER_NAME, JSON_FILE_NAME);
+            string finalZipPath = Path.Combine(Application.dataPath, "finalZip.zip");
 
-            TesterInfo tempInfo = InfoSerialization.DeserializeJsonToObj(userJsonFolder);
-            string optFilesPath = tempInfo.optionalsPath;
-            string downFilesPath = tempInfo.downloadPath;
-            bool canDownload = tempInfo.onsSubmitDownloadValue;
+            string optFilesPath;
+            string downFilesPath;
+            bool canDownload;
 
-            Task.Run(() =>
+            TesterInfo tempInfo = InfoSerialization.DeserializeJsonToObj(userJsonPath);
+            if (tempInfo != null)
+            {
+                optFilesPath = tempInfo.optionalsPath;
+                downFilesPath = tempInfo.downloadPath;
+                canDownload = tempInfo.onsSubmitDownloadValue;
+            }
+            else { throw new NullReferenceException("No JSON file deserialized!"); }
+
+            Task.Run(async () =>
             {
                 if (ManageAuxProccess())
                 { Debug.Log("Aux process completed"); }
@@ -102,32 +115,71 @@ namespace BetaMax.Core
                     { File.Delete(finalOptZip); }
 
                     Debug.Log("Started packaging");
-                    CompressionHandler.CompressToZip(optFilesPath, finalOptZip);
 
-                    while (Directory.GetFiles(userTempFolder + Path.DirectorySeparatorChar).Length <= 0)
-                    { }
+                    await Task.Run(() => CompressionHandler.CompressToZip(optFilesPath, finalOptZip));
 
                     Debug.Log("Finished file generation");
                 }
 
-            }).ContinueWith((t) =>
-            {
-                if (canDownload)
+                string tempFolder = Path.Combine(Application.dataPath, TEMP_FOLDER_NAME);
+                string txtFilePath = Path.Combine(tempFolder, "issue.txt");
+
+                if (File.Exists(txtFilePath))
+                { File.Delete(txtFilePath); }
+
+                using (FileStream fs = File.Create(txtFilePath))
                 {
-                    string userTempFolder = Path.Combine(Application.dataPath, TEMP_FOLDER_NAME, USER_OPT_FOLDER, OPT_ZIP_NAME);
-                    string destPath = Path.Combine(downFilesPath, OPT_ZIP_NAME);
-
-                    if (Directory.Exists(downFilesPath))
+                    using (TextWriter tw = new StreamWriter(fs))
                     {
-                        Debug.Log("downloads exists");
-
-                        File.Copy(userTempFolder, destPath);
+                        await tw.WriteLineAsync("Issue Category:\n" + issueCategories[submissionPanel.SelectedIssueCategory]);
+                        await tw.WriteLineAsync("\nIssue Description:\n" + submissionPanel.IssueDescription);
+                        await tw.WriteLineAsync("\nIssue Repsoduction:\n" + submissionPanel.IssueReproduction);
                     }
                 }
-            });
 
+                Debug.Log("Starting final zip generation");
+
+                //Create the final zip containing all files.
+                await Task.Run(() => CompressionHandler.CompressToZip(Path.Combine(Application.dataPath, TEMP_FOLDER_NAME), finalZipPath));
+
+            }).ContinueWith((t) =>
+            {
+                Debug.Log("Starting zip uploading");
+                PostHandler postHandler = new PostHandler(hostname, finalZipPath, serverUsername, serverPassword);
+                postHandler.BeginFileTransfer();
+
+            }).ContinueWith((t) =>
+                {
+                    if (canDownload && !String.IsNullOrEmpty(downFilesPath) && !String.IsNullOrWhiteSpace(downFilesPath))
+                    {
+                        string userTempZipPath = Path.Combine(Application.dataPath, TEMP_FOLDER_NAME, USER_OPT_FOLDER, OPT_ZIP_NAME);
+                        string copyToPath = Path.Combine(downFilesPath, OPT_ZIP_NAME);
+
+                        if (Directory.Exists(downFilesPath))
+                        {
+                            Debug.Log("downloads exists");
+
+                            if (File.Exists(copyToPath))
+                            { File.Delete(copyToPath); }
+
+                            File.Copy(userTempZipPath, copyToPath);
+                        }
+                        else
+                        {
+                            Directory.CreateDirectory(downFilesPath);
+
+                            Debug.Log("downloads did not exist./nCreating folder.");
+
+                            if (File.Exists(copyToPath))
+                            { File.Delete(copyToPath); }
+
+                            File.Copy(userTempZipPath, copyToPath);
+                        }
+                    }
+                });
         }
 
+        ///<summary>Dummy method that represents an auxiliary method.</summary>
         bool ManageAuxProccess()
         {
             if (AuxProccess != null)

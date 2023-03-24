@@ -21,6 +21,10 @@ namespace BetaMax.UI
         bool isActive = true;
         public bool IsActive { get => isActive; }
 
+        public int SelectedIssueCategory => issueCategory.value;
+        public string IssueDescription => issueDescr.text;
+        public string IssueReproduction => stepsToReproduce.text;
+
         ///<summary>Subscribe to this event to get notified when the submit button gets pressed.</summary>
         public event Action onSubmitPressed;
         private void OnSubmitPressed()
