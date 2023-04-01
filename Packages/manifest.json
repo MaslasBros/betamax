@@ -1,11 +1,11 @@
 {
   "dependencies": {
-    "com.unity.collab-proxy": "2.0.0",
+    "com.unity.collab-proxy": "2.0.1",
     "com.unity.feature.development": "1.0.1",
     "com.unity.memoryprofiler": "1.0.0",
-    "com.unity.nuget.newtonsoft-json": "3.0.2",
+    "com.unity.nuget.newtonsoft-json": "3.1.0",
     "com.unity.textmeshpro": "3.0.6",
-    "com.unity.timeline": "1.7.3",
+    "com.unity.timeline": "1.7.4",
     "com.unity.toolchain.win-x86_64-linux-x86_64": "2.0.4",
     "com.unity.ugui": "1.0.0",
     "com.unity.visualscripting": "1.8.0",
