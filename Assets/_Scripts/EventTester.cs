@@ -17,7 +17,7 @@ public class EventTester : MonoBehaviour
 
     void OnIssuePause()
     {
-        Debug.Log("Issue commited called");
+        Debug.Log("Issue paused called");
     }
 
     bool AuxTest()

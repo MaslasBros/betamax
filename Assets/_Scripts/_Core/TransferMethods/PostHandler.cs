@@ -11,7 +11,7 @@ namespace BetaMax.Posts
         string username;
         string password;
 
-        ITransferHandler activeHandler;
+        SFTP_Handler handler;
 
         public PostHandler(string url, string fileLocation, string username, string password)
         {
@@ -35,15 +35,15 @@ namespace BetaMax.Posts
             else if (url.StartsWith("ftp://"))
             {
                 Debug.Log("Is FTP");
-                //Handle it with FTP
+                FTP_Handler fTP_Handler = new FTP_Handler(url, fileLocation, username, password);
+                fTP_Handler.UploadFile();
             }
             else if (url.StartsWith("sftp://"))
             {
-                Debug.Log("Is FTPS");
-                //Handle it with SFTP
+                Debug.Log("Is SFTP");
+                handler = new SFTP_Handler(url, fileLocation, username, password);
+                handler.UploadFile();
             }
-
-            activeHandler?.HandleFileTransfer();
         }
     }
 }

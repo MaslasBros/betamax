@@ -39,6 +39,18 @@ namespace BetaMax.UI
             AssignSubmitButtonMethod(ref submitButton);
         }
 
+        private void OnEnable()
+        {
+            if (SubmissionHandler.S.PauseOnIssue)
+            { SubmissionHandler.S.OnIssuePause(); }
+        }
+
+        private void OnDisable()
+        {
+            if (SubmissionHandler.S.PauseOnIssue)
+            { SubmissionHandler.S.OnIssuePause(); }
+        }
+
         ///<summary>Assigns TogglePanel() to the back button</summary>
         void AssignBackButtonMethod(ref Button backButton)
         {

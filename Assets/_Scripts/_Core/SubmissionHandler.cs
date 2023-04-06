@@ -37,9 +37,9 @@ namespace BetaMax.Core
         [SerializeField] ConfigPanelHandler configPanel;
 
         ScreenshotHandler screenshotHandler;
-        //PostHandler postHandler;
 
         public string[] IssueCategories => (string[])issueCategories.Clone();
+        public bool PauseOnIssue { get; set; }
 
         ///<summary>Subscribe to this event to get notified when the user opens the submission form.</summary>
         public event Action onIssueCommited;
@@ -51,7 +51,7 @@ namespace BetaMax.Core
 
         ///<summary>Subscribe to this event to get notified when the user opens the submission form.</summary>
         public event Action onIssuePause;
-        void OnIssuePause()
+        public void OnIssuePause()
         {
             if (onIssuePause != null)
             {
@@ -74,7 +74,7 @@ namespace BetaMax.Core
             submissionPanel.onSubmitPressed += PackagingSequence;
         }
 
-        ///<summary>Captures a screen shot through the screenshot handler</summary>
+        ///<summary>Captures a screenshot through the screenshot handler</summary>
         void CaptureScreenshot()
         {
             screenshotHandler.CaptureScreenshot(screenshotCamera);

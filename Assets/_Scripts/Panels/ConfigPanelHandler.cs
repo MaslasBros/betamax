@@ -167,6 +167,8 @@ namespace BetaMax.UI
             tInfo.ramField = ramField.text;
             tInfo.svgaField = svgaField.text;
 
+            SubmissionHandler.S.PauseOnIssue = tInfo.onIssueToggleValue;
+
             Debug.Log("Serialization result:" + InfoSerialization.SerializeTesterInfo(tInfo, infoSavePath));
         }
 

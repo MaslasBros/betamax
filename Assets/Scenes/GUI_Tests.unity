@@ -1781,9 +1781,9 @@ MonoBehaviour:
   - TestCategory1
   - TestCategory2
   - TestCategory3
-  hostname: 
-  serverUsername: 
-  serverPassword: 
+  hostname: sftp://192.168.1.16
+  serverUsername: michael
+  serverPassword: michaelangel1234
   screenshotCamera: {fileID: 738055854}
   submissionPanel: {fileID: 724305200}
   configPanel: {fileID: 441216832}
