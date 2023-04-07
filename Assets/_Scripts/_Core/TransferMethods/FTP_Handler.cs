@@ -39,7 +39,7 @@ namespace BetaMax.Posts
                 }
             }
 
-            var response = (FtpWebResponse)request.GetResponse();
+            FtpWebResponse response = (FtpWebResponse)request.GetResponse();
             Debug.Log("Upload succeeded: " + response.StatusDescription);
             response.Close();
         }
