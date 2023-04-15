@@ -143,6 +143,9 @@ namespace BetaMax.Core
             if (String.IsNullOrEmpty(TEMP_FOLDER_PATH) || String.IsNullOrWhiteSpace(TEMP_FOLDER_PATH))
             { TEMP_FOLDER_PATH = Application.dataPath; }
 
+            if (!Directory.Exists(Path.Combine(TEMP_FOLDER_PATH, TEMP_FOLDER_NAME)))
+            { Directory.CreateDirectory(Path.Combine(TEMP_FOLDER_PATH, TEMP_FOLDER_NAME)); }
+
             HandleDumpLogCreation();
 
             infoSaveFilePath = Path.Combine(TEMP_FOLDER_PATH, TEMP_FOLDER_NAME, JSON_FILE_NAME);
@@ -158,11 +161,6 @@ namespace BetaMax.Core
 
             if (!File.Exists(logDumpPath))
             { File.Create(logDumpPath); }
-
-            using (StreamWriter writer = new StreamWriter(logDumpPath, true))
-            {
-                writer.Write("\n\tSession of " + DateTime.Now.ToString("dddd_dd_MMMM_yyyy_HH_mm_ss") + ": \n");
-            }
         }
 
         private void Start()
