@@ -5,7 +5,6 @@ namespace BetaMax.Core.IO
 
     public class ScreenshotHandler : MonoBehaviour
     {
-        //string tempFolderName = "SubTemp";
         string tempFolderPath = Application.dataPath;
         string screenshotName = "scrIssue.jpg";
         string tempFolderFinalPath = string.Empty;

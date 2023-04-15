@@ -12,17 +12,21 @@ public class EventTester : MonoBehaviour
 
     void OnIssueCommit()
     {
-        Debug.Log("Issue commited called");
+        SubmissionHandler.Log("Issue commited called");
     }
 
     void OnIssuePause()
     {
-        Debug.Log("Issue paused called");
+        SubmissionHandler.Log("Issue paused called");
     }
 
     bool AuxTest()
     {
-        Debug.Log("Aux called");
+        SubmissionHandler.Log("Aux called");
+        for (int i = 0; i < 10000; i++)
+        {
+            _ = i;
+        }
         return true;
     }
 

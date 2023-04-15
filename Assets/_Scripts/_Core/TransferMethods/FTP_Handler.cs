@@ -2,7 +2,7 @@ namespace BetaMax.Posts
 {
     using System.IO;
     using System.Net;
-    using UnityEngine;
+    using BetaMax.Core;
 
     public class FTP_Handler
     {
@@ -20,12 +20,12 @@ namespace BetaMax.Posts
             this.username = username;
             this.password = password;
 
-            Debug.Log("Set server info");
+            SubmissionHandler.Log("Set server info");
         }
 
         public void UploadFile()
         {
-            Debug.Log("Starting file upload");
+            SubmissionHandler.Log("Starting file upload");
             FtpWebRequest request = (FtpWebRequest)WebRequest.Create(url);
             request.Credentials = new NetworkCredential(username, password);
             request.Method = WebRequestMethods.Ftp.UploadFile;
@@ -40,7 +40,7 @@ namespace BetaMax.Posts
             }
 
             FtpWebResponse response = (FtpWebResponse)request.GetResponse();
-            Debug.Log("Upload succeeded: " + response.StatusDescription);
+            SubmissionHandler.Log("Upload succeeded: " + response.StatusDescription);
             response.Close();
         }
     }

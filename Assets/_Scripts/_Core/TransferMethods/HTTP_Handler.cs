@@ -4,6 +4,7 @@ namespace BetaMax.Posts
     using System.Collections;
     using System.IO;
     using System.Text;
+    using BetaMax.Core;
     using UnityEngine;
     using UnityEngine.Networking;
 
@@ -23,12 +24,12 @@ namespace BetaMax.Posts
             this.username = username;
             this.password = password;
 
-            Debug.Log("Set server info");
+            SubmissionHandler.Log("Set server info");
         }
 
         public void UploadFile()
         {
-            Debug.Log("Starting file upload");
+            SubmissionHandler.Log("Starting file upload");
             StartCoroutine(HandleFileTransfer());
         }
 
@@ -47,7 +48,7 @@ namespace BetaMax.Posts
             UnityWebRequestAsyncOperation operation = www.SendWebRequest();
             while (!operation.isDone)
             {
-                Debug.Log("Upload in progress");
+                SubmissionHandler.Log("Upload in progress");
                 yield return null;
             }
 
@@ -56,7 +57,7 @@ namespace BetaMax.Posts
                 throw new Exception($"Failed to upload zip file: {www.error}");
             }
 
-            Debug.Log("Zip file uploaded successfully.");
+            SubmissionHandler.Log("Zip file uploaded successfully.");
 
             Destroy(this);
         }

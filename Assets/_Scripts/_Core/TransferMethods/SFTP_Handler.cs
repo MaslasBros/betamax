@@ -1,8 +1,8 @@
 namespace BetaMax.Posts
 {
     using System.IO;
+    using BetaMax.Core;
     using Renci.SshNet;
-    using UnityEngine;
 
     public class SFTP_Handler
     {
@@ -23,7 +23,7 @@ namespace BetaMax.Posts
 
         public void UploadFile()
         {
-            Debug.Log("Starting file upload");
+            SubmissionHandler.Log("Starting file upload");
 
             try
             {
@@ -31,7 +31,7 @@ namespace BetaMax.Posts
                 SftpClient sftp = new SftpClient(connInfo);
                 sftp.Connect();
 
-                Debug.Log(sftp.IsConnected);
+                SubmissionHandler.Log(sftp.IsConnected.ToString());
 
                 string remoteFilePath = "/home/michael/tests/file.zip";
                 using (FileStream fileStream = new FileStream(fileLocation, FileMode.Open))
@@ -41,7 +41,7 @@ namespace BetaMax.Posts
             }
             catch (System.Exception e)
             {
-                Debug.Log(e);
+                SubmissionHandler.Log(e.ToString());
             }
         }
     }

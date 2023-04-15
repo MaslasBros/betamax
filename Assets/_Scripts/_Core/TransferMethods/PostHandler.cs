@@ -1,5 +1,4 @@
 using BetaMax.Core;
-using UnityEngine;
 
 namespace BetaMax.Posts
 {
@@ -26,7 +25,7 @@ namespace BetaMax.Posts
         {
             if (url.StartsWith("http://") || url.StartsWith("https://"))
             {
-                Debug.Log("Is HTTP(S)");
+                SubmissionHandler.Log("Is HTTP(S)");
 
                 HTTP_Handler hTTP_Handler = SubmissionHandler.S.gameObject.AddComponent<HTTP_Handler>();
                 hTTP_Handler.SetServerInfo(url, fileLocation, username, password);
@@ -34,13 +33,13 @@ namespace BetaMax.Posts
             }
             else if (url.StartsWith("ftp://"))
             {
-                Debug.Log("Is FTP");
+                SubmissionHandler.Log("Is FTP");
                 FTP_Handler fTP_Handler = new FTP_Handler(url, fileLocation, username, password);
                 fTP_Handler.UploadFile();
             }
             else if (url.StartsWith("sftp://"))
             {
-                Debug.Log("Is SFTP");
+                SubmissionHandler.Log("Is SFTP");
                 handler = new SFTP_Handler(url, fileLocation, username, password);
                 handler.UploadFile();
             }

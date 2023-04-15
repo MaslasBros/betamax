@@ -1771,10 +1771,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   JSON_FILE_NAME: testerInfo.json
+  TEMP_FOLDER_PATH: 
   TEMP_FOLDER_NAME: SubTemp
   USER_OPT_FOLDER: UserOptFiles
   MAIN_ZIP_NAME: mainZip.zip
-  OPT_ZIP_NAME: optZip.zip
+  DOWNLOADED_ZIP_NAME: sentZip.zip
   submitPanelKey: 287
   configPanelKey: 288
   issueCategories:
@@ -1787,6 +1788,7 @@ MonoBehaviour:
   screenshotCamera: {fileID: 738055854}
   submissionPanel: {fileID: 724305200}
   configPanel: {fileID: 441216832}
+  showDebug: 0
 --- !u!1 &317871503
 GameObject:
   m_ObjectHideFlags: 0
@@ -2653,7 +2655,7 @@ MonoBehaviour:
   cpuField: {fileID: 519680231}
   ramField: {fileID: 742761155}
   svgaField: {fileID: 1122603683}
-  backButton: {fileID: 1745317074}
+  closeButton: {fileID: 1745317074}
   saveButton: {fileID: 1671612562}
 --- !u!1 &462058730
 GameObject:
@@ -3815,8 +3817,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 738055853}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalRotation: {x: -0.24346012, y: 0.35004517, z: -0.094736725, w: -0.8995668}
+  m_LocalPosition: {x: 6.1645093, y: 4.8700676, z: -6.366317}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
