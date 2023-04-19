@@ -67,8 +67,11 @@ namespace BetaMax.UI
 
         private void OnDisable()
         {
-            if (SubmissionHandler.S.PauseOnIssue)
-            { SubmissionHandler.S.OnIssuePause(); }
+            if (SubmissionHandler.S != null)
+            {
+                if (SubmissionHandler.S.PauseOnIssue)
+                { SubmissionHandler.S.OnIssuePause(); }
+            }
         }
 
         ///<summary>Assigns TogglePanel() to the back button</summary>
@@ -77,10 +80,11 @@ namespace BetaMax.UI
             backButton.onClick.AddListener(() => TogglePanel());
         }
 
-        ///<summary>Raises the OnSubmitPressed event when pressed</summary>
+        ///<summary>Assigns OnSubmitPressed() and TogglePanel() to the back button</summary>
         void AssignSubmitButtonMethod(ref Button submitButton)
         {
             submitButton.onClick.AddListener(() => OnSubmitPressed());
+            submitButton.onClick.AddListener(() => TogglePanel());
         }
 
         private void Start()

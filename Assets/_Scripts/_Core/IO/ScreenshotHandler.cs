@@ -5,17 +5,14 @@ namespace BetaMax.Core.IO
 
     public class ScreenshotHandler : MonoBehaviour
     {
-        string tempFolderPath = Application.dataPath;
         string screenshotName = "scrIssue.jpg";
         string tempFolderFinalPath = string.Empty;
 
         public string ScreenshotPath => Path.Combine(tempFolderFinalPath, screenshotName);
 
-        private void Awake()
+        private void Start()
         {
-            tempFolderFinalPath = Path.Combine(tempFolderPath, SubmissionHandler.S.TEMP_FOLDER_NAME);
-            if (!Directory.Exists(tempFolderFinalPath))
-            { Directory.CreateDirectory(tempFolderFinalPath); }
+            tempFolderFinalPath = Path.Combine(SubmissionHandler.S.TEMP_FOLDER_PATH, SubmissionHandler.S.TEMP_FOLDER_NAME);
         }
 
         ///<summary>Saves a jpg image from the passed camera at the users device</summary>

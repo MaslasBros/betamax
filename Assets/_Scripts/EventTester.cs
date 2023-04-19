@@ -7,7 +7,7 @@ public class EventTester : MonoBehaviour
     {
         SubmissionHandler.S.onIssueCommited += OnIssueCommit;
         SubmissionHandler.S.onIssuePause += OnIssuePause;
-        SubmissionHandler.S.AuxProccess = AuxTest;
+        SubmissionHandler.S.onAuxProcessCalled += AuxTest;
     }
 
     void OnIssueCommit()
@@ -20,14 +20,15 @@ public class EventTester : MonoBehaviour
         SubmissionHandler.Log("Issue paused called");
     }
 
-    bool AuxTest()
+    void AuxTest()
     {
         SubmissionHandler.Log("Aux called");
         for (int i = 0; i < 10000; i++)
         {
             _ = i;
         }
-        return true;
+
+        SubmissionHandler.Log("Aux finished");
     }
 
     private void OnDestroy()
@@ -36,7 +37,7 @@ public class EventTester : MonoBehaviour
         {
             SubmissionHandler.S.onIssueCommited -= OnIssueCommit;
             SubmissionHandler.S.onIssuePause -= OnIssuePause;
-            SubmissionHandler.S.AuxProccess = null;
+            SubmissionHandler.S.onAuxProcessCalled -= AuxTest;
         }
     }
 }

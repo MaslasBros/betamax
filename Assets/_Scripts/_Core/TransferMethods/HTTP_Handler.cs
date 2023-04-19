@@ -4,18 +4,31 @@ namespace BetaMax.Posts
     using System.Collections;
     using System.IO;
     using System.Text;
+
     using BetaMax.Core;
+
     using UnityEngine;
     using UnityEngine.Networking;
 
+    ///<summary>
+    /// A class used to upload the files to a FTP server.
+    /// </summary>
+    /// * The UploadFile() method can be freely modified to suit your needs.
     public class HTTP_Handler : MonoBehaviour
     {
+        ///<summary>The server url</summary>
         string url;
+        ///<summary>The local file location</summary>
         string fileLocation;
 
+        ///<summary>The server login username</summary>
         string username;
+        ///<summary>The server login password.</summary>
         string password;
 
+        Action<bool> uploadResultCallback;
+
+        ///<summary>Sets the server login info</summary>
         public void SetServerInfo(string url, string fileLocation, string username, string password)
         {
             this.url = url;
@@ -24,18 +37,22 @@ namespace BetaMax.Posts
             this.username = username;
             this.password = password;
 
-            SubmissionHandler.Log("Set server info");
+            SubmissionHandler.Log("Info set for HTTP(S)");
         }
 
-        public void UploadFile()
+        ///<summary>Start server uploading with </summary>
+        public void UploadFile(Action<bool> uploadResultCallback)
         {
-            SubmissionHandler.Log("Starting file upload");
+            this.uploadResultCallback = uploadResultCallback;
+
             StartCoroutine(HandleFileTransfer());
         }
 
         ///<summary>Call to begin the user file post to the HTTP provided server.</summary>
         public IEnumerator HandleFileTransfer()
         {
+            SubmissionHandler.Log("Starting file upload");
+
             byte[] fileBytes = File.ReadAllBytes(fileLocation);
 
             UnityWebRequest www = UnityWebRequest.PostWwwForm(url, "POST");
@@ -48,16 +65,21 @@ namespace BetaMax.Posts
             UnityWebRequestAsyncOperation operation = www.SendWebRequest();
             while (!operation.isDone)
             {
-                SubmissionHandler.Log("Upload in progress");
                 yield return null;
             }
 
             if (www.result != UnityWebRequest.Result.Success)
             {
-                throw new Exception($"Failed to upload zip file: {www.error}");
-            }
+                SubmissionHandler.Log($"Failed to upload zip file: {www.error}");
 
-            SubmissionHandler.Log("Zip file uploaded successfully.");
+                uploadResultCallback?.Invoke(false);
+            }
+            else
+            {
+                SubmissionHandler.Log("Zip file uploaded successfully.");
+
+                uploadResultCallback?.Invoke(true);
+            }
 
             Destroy(this);
         }
