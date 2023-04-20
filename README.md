@@ -26,6 +26,10 @@ A **Unity3D runtime** tool used for beta testing and issue reporting. It support
   
   - [Transfer Folder](#the-transfer-handlers)
 
+- [External Tools](#external-tools-used)
+  
+  - [SSH.NET](#ssh.net)
+
 #### Tool Flowchart
 
 ```mermaid
@@ -211,3 +215,7 @@ This folder contains the PostHandler class which automatically determines which 
 * FTP handler class.
 
 * SFTP handler class.
+
+### External Tools Used
+
+* **SSH.NET**: SSH.NET is a Secure Shell (SSH) library for .NET, optimized for parallelism.
