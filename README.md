@@ -158,11 +158,14 @@ Below comes the **inspector modifiable** fields and how you can **edit** them.
 | --------------- | ---- | ------------------------------------------------------- |
 | Show Debug Logs | bool | Whether to show debug logs or not in the unity console. |
 
+A log file is also created in the runtime and placed inside the TEMP_FOLDER_NAME which logs everything that is happening in the tool, whether or not Show Debug Logs is toggled on.
+
 ##### The Configuration Panel Handler
 
 This class is responsible for validating and transfering the configuration panel fields to the Submission Handler class for serialization.It also notifies the user in case a path he entered in the optionals paths exists.
 
 **Required fields: Tester Name**
+**Leave enabled, auto-toggles to closed upon play**
 
 *Place on the UI element you'll use as the panel for your config form. Example provided* 
 
@@ -186,6 +189,7 @@ Below comes the **inspector modifiable** fields and how you can **edit** them.
 
 This class is responsible for raising the SubmissionHandler.OnIssuePause and OnSubmitPressed events along with automatically populating the dropdown field with the SubmissionHandler issue categories.
 
+**Leave enabled, auto-toggles to closed upon play**
 *Place on the UI element you'll use as the panel for your config form. Example provided*
 
 Below comes the **inspector modifiable** fields and how you can **edit** them.
