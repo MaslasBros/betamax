@@ -47,9 +47,9 @@ namespace BetaMax.Core
         [SerializeField] string mainZipFormat = "{date}_{name}";
         ///<summary>The date format</summary>
         [Tooltip("The date format")]
-        [SerializeField] string dateFormat = "";
-        ///<summary>The name of the zip that will hold the optional user files during transfer.</summary>
-        [Tooltip("The name of the zip that will hold the optional user files during transfer.")]
+        [SerializeField] string dateFormat = "dd_MM_yyyy_HH_mm_ss";
+        ///<summary>The name of the zip saved locally to the users device.</summary>
+        [Tooltip("The name of the zip saved locally to the users device.")]
         public string DOWNLOADED_ZIP_NAME = "sentZip.zip";
 
         ///<summary>The button that will open the submit panel</summary>
@@ -93,9 +93,9 @@ namespace BetaMax.Core
         [SerializeField, Tooltip("The time which the message text will get displayed for.")]
         float closeAfterSeconds = 5f;
 
-        ///<summary>Whether to show debug log or not.</summary>
+        ///<summary>Whether to show debug logs or not in the unity console.</summary>
         [Header("Debugging Log")]
-        [SerializeField, Tooltip("Whether to show debug log or not.")]
+        [SerializeField, Tooltip("Whether to show debug logs or not in the unity console.")]
         bool showDebug = true;
 
         #region PRIVATE_VARS
@@ -326,7 +326,11 @@ namespace BetaMax.Core
                 downFilesPath = tempInfo.downloadPath;
                 canDownload = tempInfo.onsSubmitDownloadValue;
             }
-            else { throw new NullReferenceException("No JSON file deserialized!"); }
+            else
+            {
+                Log("No JSON file deserialized!");
+                return;
+            }
 
             ShowUploadMessage("Uploading...");
 
