@@ -141,6 +141,7 @@ flowchart TD
     if2 --Yes--> evnt8 --> if4
     if2 --No--> if4
     if4 --Yes--> evnt13
+    if4 --No--> nd
     evnt13 --> nd
 ```
 
