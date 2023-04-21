@@ -1,34 +1,104 @@
-# BetaMax
-
-### Description
-
-A **Unity3D runtime** tool used for beta testing and issue reporting. It supports the HTTP/HTTPS, FTP, SFTP upload protocols. The user with the press of a button can submit his issue to your server with ease and also provides the user with the functionality of adding additional files to the final zipped file that you will receive and  automatically save a copy of his sent info to his device upon uploading. All of this fully customizable and extensible for your use.
+# ![BetaMax Icon](https://raw.githubusercontent.com/MaslasBros/betamax/prod/Docs/betamax.png)
 
 # Table of Contents
 
-- [Tool Flowchart](#tool-flowchart)
+* [Description](#description)
 
-- [Base Structure](#base-structure)
+* [Screenshots](#screenshots)
 
-- [Supported Protocols](#supported-protocols)
+* [Features](#features)
 
-- [Base Handlers](#base-handlers)
+* [Unity Folder Structure](#unity-folder-structure)
+
+* [Tool Flowchart](#tool-flowchart)
+
+* [Base Handler](#base-handler)
   
-  - [Submission Handler](#the-submission-handler-class)
+  * [Submission Handler](#the-submission-handler-class)
   
-  - [Configuration Panel Handler](#the-configuration-panel-handler)
-  
-  - [Submission Panel Handler](#the-submission-panel-handler)
+  * [Data Container Structs](#the-data-containers)
 
-- [Further Functionalities](#further-functionalities)
-  
-  - [IO Folder](#the-io-handlers)
-  
-  - [Transfer Folder](#the-transfer-handlers)
+* [Dependencies](#dependencies)
 
-- [External Tools](#external-tools-used)
+# Description
 
-#### Tool Flowchart
+A **Unity3D runtime** tool used for beta testing and issue reporting. It supports the HTTP/HTTPS, FTP, SFTP upload protocols. The user with the press of a button can submit his issue to your server with ease and also provides the user with the functionality of adding additional files to the final zipped file that you will receive and  automatically save a copy of his sent info to his device upon uploading. All of this fully customizable and extensible for your use.
+
+# Screenshots
+
+## UI Examples provided
+
+![](https://raw.githubusercontent.com/MaslasBros/betamax/prod/Docs/configPanel.png)
+
+![](https://raw.githubusercontent.com/MaslasBros/betamax/prod/Docs/submitPanel.png)
+
+# Features
+
+## User Persistent Data
+
+The tool provides you and the user with a simple JSON file that can be edited, serialized and saved on the beta tester's device, so no need to re-enter all the needed information every time the user presses the submit button.
+
+## Supported Protocols
+
+The supported protocols: *FTP*, *SFTP*, *HTTP*, *HTTPS*.
+
+***No encryption on the inspector fields is provided, although you can extend this.***
+
+HTTP/S uses ***BasicAuth***.
+
+## UI Examples Included
+
+Inside the package you'll also find a fully setted up and functional UI template which you can freely use and modify to your needs.
+
+Located at [Screenshots](#screenshots)
+
+# Unity Folder Structure
+
+Upon opening the package.
+
+```mermaid
+graph LR;
+    A[Assets]-->B[BetaMax];
+    A-->C[Exmaples];
+```
+
+The BetaMax Folder is where the whole tool is contained in. All the essential scripts and plugins are also included in this folder. The single script you'll need will be the **SubmissionHandler** class.
+
+```mermaid
+graph LR;
+    A[BetaMax];
+    B[_Core];
+    C[IO];
+    D[Posts];
+
+    A-->B
+    A-->C
+    A-->D
+
+    E[SubmissionHandler.cs]
+    F[Device file handlers]
+    G[Uploading handlers]
+
+    B-->E
+    C-->F
+    D-->G
+```
+
+The Examples folder contains a fully functional scene and some example panel scripts so you can have a starting point on how to set up your UI. Although none of the example scripts are needed for the tool.
+
+```mermaid
+graph LR;
+    A[Example]
+    B[Scripts]
+    C[Scenes]
+    D[Dummy Scene]
+
+    A-->B
+    A-->C
+    C-->D
+```
+
+# Tool Flowchart
 
 ```mermaid
 flowchart TD
@@ -74,33 +144,9 @@ flowchart TD
     evnt13 --> nd
 ```
 
-### 
+# Base Handler
 
-### Supported Protocols
-
-The supported protocols: *FTP*, *SFTP*, *HTTP*, *HTTPS*.
-
-***No encryption on the inspector fields is provided, although you can extend this.***
-
-### Base Structure
-
-The base components of the tool consist of three scripts that must be attached to GameObjects.
-
-* Submission Handler
-
-* Configuration Panel Handler
-
-* Submission Panel Handler
-
-Further Functionalities
-
-1) The IO folder.
-
-2) The Transfer Methods folder.
-
-### Base Handlers
-
-##### The Submission Handler class
+## The Submission Handler class
 
 The SubmissionHandler class (SubmissionHandler.cs) is the main handler of the tool. This is the place where you will set up everything you need for the tool to work properly. From save folders to server info and the screenshot handler.
 
@@ -108,7 +154,7 @@ The SubmissionHandler class (SubmissionHandler.cs) is the main handler of the to
 
 Below comes the **inspector modifiable** fields and how you can **edit** them.
 
-###### File Naming Settings
+### File Naming Settings
 
 | Name                | Type   | Field Info                                                                                                                                       |
 | ------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -121,38 +167,38 @@ Below comes the **inspector modifiable** fields and how you can **edit** them.
 | Date Format         | string | The format you want the {date} to be formatted as, for example: dd_MM_yyyy_HH_mm_ss                                                              |
 | DOWNLOADED_ZIP_NAME | string | The name of the zip saved locally to the users device. The final name will be formatted as {fixedDateFormat}_{DOWNLOADED_ZIP_NAME}               |
 
-###### Submitter Settings
+### Submitter Settings
 
-| Name             | Type     | Field Info                                                                                  |
-| ---------------- | -------- | ------------------------------------------------------------------------------------------- |
-| Submit Panel Key | KeyCode  | The button that will toggle the submit panel ON/OFF.                                        |
-| Config Panel Key | KeyCode  | The button that will toggle the configuration panel ON/OFF.                                 |
-| Issue Categories | string[] | The categories of issues that the handler automatically feeds to the submit panel dropdown. |
+| Name             | Type     | Field Info                                                                                         |
+| ---------------- | -------- | -------------------------------------------------------------------------------------------------- |
+| Submit Panel Key | KeyCode  | The button that will toggle the submit panel ON/OFF.                                               |
+| Config Panel Key | KeyCode  | The button that will toggle the configuration panel ON/OFF.                                        |
+| Issue Categories | string[] | The categories of issues that your UI handler can automatically retrieve and feed to the dropdown. |
 
-###### Server Info
+### Server Info
 
-| Name            | Type   | Field Info                                                                                                                                 |
-| --------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| Hostname        | string | The transfer server URL. The protocol is automatically determined in the handler. URL Format: {PROTOCOL}://{address}:{PORT}{Abs\|Rel path} |
-| Server Username | string | The server login username.                                                                                                                 |
-| Server Password | string | The server login password.                                                                                                                 |
+| Name            | Type   | Field Info                                                                                                                                                 |
+| --------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Hostname        | string | The transfer server URL. The protocol is automatically determined in the handler. **URL Format:** {PROTOCOL}://{address}:{PORT}/{Abs\|Rel path}/{fileName} |
+| Server Username | string | The server login username.                                                                                                                                 |
+| Server Password | string | The server login password.                                                                                                                                 |
 
-###### Screenshot Camera
+### Screenshot Camera
 
 | Name              | Type         | Field Info                                      |
 | ----------------- | ------------ | ----------------------------------------------- |
 | Screenshot camera | Unity Camera | The camera that will be used for screenshoting. |
 
-###### UI Panels
+### UI Panels:
 
-| Name                | Type                   | Field Info                                                                  |
-| ------------------- | ---------------------- | --------------------------------------------------------------------------- |
-| Submission Panel    | SubmissionPanelHandler | Reference to the SubmissionPanelHandler on the submission panel gameObject. |
-| Config Panel        | ConfigPanelHandler     | Reference to the ConfigPanelHandler on the configuration panel gameObject   |
-| Message Text        | TMP_UGUI               | The UI element used to show tool messages to the interface                  |
-| Close After Seconds | float                  | The time which the message text will get displayed for.                     |
+| Name                | Type       | Field Info                                                 |
+| ------------------- | ---------- | ---------------------------------------------------------- |
+| Submission Panel    | GameObject | Reference to the gameObject of the submission panel.       |
+| Config Panel        | GameObject | Reference to the gameObject of the configuration panel.    |
+| Message Text        | TMP_UGUI   | The UI element used to show tool messages to the interface |
+| Close After Seconds | float      | The time which the message text will get displayed for.    |
 
-###### Debugging Log
+### Debugging Log
 
 | Name            | Type | Field Info                                              |
 | --------------- | ---- | ------------------------------------------------------- |
@@ -160,64 +206,18 @@ Below comes the **inspector modifiable** fields and how you can **edit** them.
 
 A log file is also created in the runtime and placed inside the TEMP_FOLDER_NAME which logs everything that is happening in the tool, whether or not Show Debug Logs is toggled on.
 
-##### The Configuration Panel Handler
+## The Data Containers
 
-This class is responsible for validating and transfering the configuration panel fields to the Submission Handler class for serialization.It also notifies the user in case a path he entered in the optionals paths exists.
+Two structs are used to transfer the panel data to the Submission Handler.
 
-**Required fields: Tester Name**
-**Leave enabled, auto-toggles to closed upon play**
+1) ConfigInfo
 
-*Place on the UI element you'll use as the panel for your config form. Example provided* 
+2) SubmitInfo
 
-Below comes the **inspector modifiable** fields and how you can **edit** them.
+The SubmissionHandler must know what field data to serialize and to achieve this a ConfigStruct must be passed to the Submission Handler when it's time to save the user's info.
 
-| Name                      | Type           | Field Info                                                                                   |
-| ------------------------- | -------------- | -------------------------------------------------------------------------------------------- |
-| On Issue Pause Toggle     | Toggle         | The Unity toggle for onIssuePause                                                            |
-| On Submit Download Toggle | Toggle         | The Unity toggle for onSubmitDownload                                                        |
-| Downloads Path Field      | TMP_InputField | The UI text field for the download path. (Auto created upon uploading if it does not exist.) |
-| Optionals Path Field      | TMP_InputField | The UI text field for the optional folder path. (Exists validation.)                         |
-| Beta Tester               | TMP_InputField | The UI text field for the beta tester name                                                   |
-| OS Field                  | TMP_InputField | The UI text field for OS information                                                         |
-| CPU Field                 | TMP_InputField | The UI text field for CPU information                                                        |
-| RAM Field                 | TMP_InputField | The UI text field for RAM information                                                        |
-| SVGA Field                | TMP_InputField | The UI text field for GPU information                                                        |
-| Close Button              | Button         | The UI Button for the Close functionality                                                    |
-| Save Button               | Button         | The UI Button for the Save/Serialize functionality                                           |
+The submission process follows the same path, when the user wants to upload the data a SubmitInfo struct must be passed to the Submission Handler so the field info can be collected from the interface.
 
-##### The Submission Panel handler
-
-This class is responsible for raising the SubmissionHandler.OnIssuePause and OnSubmitPressed events along with automatically populating the dropdown field with the SubmissionHandler issue categories.
-
-**Leave enabled, auto-toggles to closed upon play**
-*Place on the UI element you'll use as the panel for your config form. Example provided*
-
-Below comes the **inspector modifiable** fields and how you can **edit** them.
-
-| Name               | Type           | Field Info                                                           |
-| ------------------ | -------------- | -------------------------------------------------------------------- |
-| Issue Category     | TMP_Dropdown   | The UI dropdown for issueCategory                                    |
-| Issue Descr        | TMP_InputField | The UI text area for issue description                               |
-| Steps To Reproduce | TMP_InputField | The UI text area for issue reproduction steps                        |
-| Submit Button      | Button         | The UI button used for submittion. Raises the OnSubmitPressed event. |
-| Back Button        | Button         | The UI button used for closing the panel.                            |
-
-### Further Functionalities
-
-##### The IO handlers
-
-This folder contains essential classes that handle the serialization of the user configuration, the screenshot class and also the compression handler used for zipping the files.
-
-##### The Transfer handlers
-
-This folder contains the PostHandler class which automatically determines which transfer method to use for uploading. It also contains the tool supported protocols classes which can be modified to your servers' needs.
-
-* HTTP(S) handler class.
-
-* FTP handler class.
-
-* SFTP handler class.
-
-### External Tools Used
+# Dependencies
 
 * **[SSH.NET](https://github.com/sshnet/SSH.NET)**: SSH.NET is a Secure Shell (SSH) library for .NET, optimized for parallelism.
