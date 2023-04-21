@@ -6,6 +6,7 @@ namespace BetaMax.Posts
     using Renci.SshNet;
 
     using BetaMax.Core;
+    using UnityEngine;
 
     ///<summary>
     /// A class used to upload the files to a SFTP server.
@@ -39,24 +40,26 @@ namespace BetaMax.Posts
         ///<summary>Start uploading with SFTP protocol.</summary>
         public void UploadFile(out bool result)
         {
+            SubmissionHandler.Log("Starting SFTP file upload");
+            Uri uri = new Uri(url);
+            string hostUrl = uri.Host.Trim();
+            string remoteFilePath = uri.LocalPath.Trim();
+            int port = uri.Port;
+
+            //Differentiate between relative and absolute paths.
+            if (!remoteFilePath.StartsWith("//"))
+            { remoteFilePath = remoteFilePath.TrimStart('/'); }
+
+            ConnectionInfo connInfo = new ConnectionInfo(hostUrl, port, username, new PasswordAuthenticationMethod(username, password));
+            SftpClient sftp = new SftpClient(connInfo);
+
             try
             {
-                SubmissionHandler.Log("Starting SFTP file upload");
-                Uri uri = new Uri(url);
-                string hostUrl = uri.Host;
-                string remoteFilePath = uri.LocalPath;
-
-                //Differentiate between relative and absolute paths.
-                if (!remoteFilePath.StartsWith("//"))
-                { remoteFilePath = remoteFilePath.TrimStart('/'); }
-
-                ConnectionInfo connInfo = new ConnectionInfo(hostUrl, username, new PasswordAuthenticationMethod(username, password));
-                SftpClient sftp = new SftpClient(connInfo);
                 sftp.Connect();
 
                 SubmissionHandler.Log("Is SFTP connected: " + sftp.IsConnected.ToString());
-
                 SubmissionHandler.Log("Remote path: " + remoteFilePath);
+
                 using (FileStream fileStream = new FileStream(fileLocation, FileMode.Open))
                 {
                     sftp.UploadFile(fileStream, remoteFilePath);
@@ -69,7 +72,7 @@ namespace BetaMax.Posts
             catch (System.Exception e)
             {
                 SubmissionHandler.Log(e.ToString());
-
+                sftp.Disconnect();
                 result = false;
             }
         }
