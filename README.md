@@ -48,7 +48,7 @@ HTTP/S uses ***BasicAuth***.
 
 ## UI Examples Included
 
-Inside the package you'll also find a fully setted up and functional UI template which you can freely use and modify to your needs.
+Inside the package you'll also find a fully set up and functional UI template which you can freely use and modify to your needs.
 
 Located at [Screenshots](#screenshots)
 
