@@ -1788,15 +1788,15 @@ MonoBehaviour:
   - TestCategory2
   - TestCategory3
   - TestCategory4
-  hostname: ftp://192.168.1.17/upload/{fileName}
+  hostname: ftp://192.168.1.17:21/upload/{fileName}
   serverUsername: michael
   serverPassword: michaelangel1234
   screenshotCamera: {fileID: 738055854}
-  submissionPanel: {fileID: 724305200}
-  configPanel: {fileID: 441216832}
+  submissionPanel: {fileID: 724305196}
+  configPanel: {fileID: 441216828}
   messageText: {fileID: 1759734919}
   closeAfterSeconds: 3
-  showDebug: 0
+  showDebug: 1
 --- !u!1 &317871503
 GameObject:
   m_ObjectHideFlags: 0

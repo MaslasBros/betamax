@@ -6,12 +6,54 @@ namespace BetaMax.Core
     using System.Threading.Tasks;
 
     using UnityEngine;
-
-    using BetaMax.UI;
-    using BetaMax.Core.IO;
-    using BetaMax.Posts;
     using TMPro;
     using System.Collections;
+
+    using BetaMax.Core.IO;
+    using BetaMax.Posts;
+    using System.Text.RegularExpressions;
+
+    ///<summary>
+    /// A struct used entirely as a data cariage for the config panel to send 
+    /// its field info to the submission handler for serialization.
+    ///</summary>
+    public struct ConfigInfo
+    {
+        ///<summary>Pause on Issue toggle state</summary>
+        public bool onIssuePauseValue;
+        ///<summary>Download on submit toggle state</summary>
+        public bool onSubmitDownloadValue;
+
+        ///<summary>The path to download the final zip to.</summary>
+        public string downloadsPathValue;
+        ///<summary>The path to the optional files folder of the user.</summary>
+        public string optionalsPathValue;
+
+        ///<summary>The beta tester's name</summary>
+        public string betaTesterValue;
+        ///<summary>The OS info of the user.</summary>
+        public string osFieldValue;
+        ///<summary>The CPU info of the user.</summary>
+        public string cpuFieldValue;
+        ///<summary>The RAM info of the user.</summary>
+        public string ramFieldValue;
+        ///<summary>The GPU info of the user.</summary>
+        public string svgaFieldValue;
+    }
+
+    ///<summary>
+    /// A struct used entirely as a data cariage for the submission panel to send 
+    /// its field info to the submission handler for serialization.
+    ///</summary>
+    public struct SubmitInfo
+    {
+        ///<summary>The selected issue category index from the UI dropdown</summary>
+        public int selectedIssueCategory;
+        ///<summary>The issue description</summary>
+        public string issueDescription;
+        ///<summary>How to reproduce the issue.</summary>
+        public string issueReproduction;
+    }
 
     ///<summary>
     /// This class is the main handler of the serialization and packaging proccess of the tool.
@@ -81,11 +123,11 @@ namespace BetaMax.Core
 
         ///<summary>Reference to the SubmissionPanelHandler on the submission panel gameObject</summary>
         [Header("UI Panels")]
-        [SerializeField, Tooltip("Reference to the SubmissionPanelHandler on the submission panel gameObject")]
-        SubmissionPanelHandler submissionPanel;
+        [SerializeField, Tooltip("Reference to the gameobject of the submission panel")]
+        GameObject submissionPanel;
         ///<summary>Reference to the ConfigPanelHandler on the configuration panel gameObject</summary>
-        [SerializeField, Tooltip("Reference to the ConfigPanelHandler on the configuration panel gameObject")]
-        ConfigPanelHandler configPanel;
+        [SerializeField, Tooltip("Reference to the gameobject of the configuration panel")]
+        GameObject configPanel;
         ///<summary>The UI element used to show tool messages to the interface</summary>
         [SerializeField, Tooltip("The UI element used to show tool messages to the interface")]
         TextMeshProUGUI messageText;
@@ -106,6 +148,11 @@ namespace BetaMax.Core
 
         ///<summary>The initial path to create the application folder to.</summary>
         string sourcePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+
+        ///<summary>The active configuration info</summary>
+        ConfigInfo configInfo;
+        ///<summary>The currently submitted info from the submision panel.</summary>
+        SubmitInfo submitInfo;
 
         ///<summary>ScreenshotHandler reference</summary>
         ScreenshotHandler screenshotHandler;
@@ -143,6 +190,12 @@ namespace BetaMax.Core
         public void OnIssuePause()
         { onIssuePause?.Invoke(); }
 
+        ///<summary>Subscribe to this event to get notified when the submit button gets pressed.</summary>
+        event Action onSubmitPressed;
+        ///<summary>Raises the onSubmitPressed event</summary>
+        public void OnSubmitPressed()
+        { onSubmitPressed?.Invoke(); }
+
         ///<summary>Subscribe to this event to receive the config info from the configuration panel when raised.</summary>
         public event Action<ConfigInfo> onSerializeConfigInfo;
         ///<summary>Raises the onSerializeConfigInfo event</summary>
@@ -156,6 +209,7 @@ namespace BetaMax.Core
         { onAuxProcessCalled?.Invoke(); }
         #endregion
 
+        #region ENTRY_SETUP
         private void Awake()
         {
             InitialSetup();
@@ -179,8 +233,8 @@ namespace BetaMax.Core
             _showDebug = showDebug;
             screenshotHandler = gameObject.AddComponent<ScreenshotHandler>();
 
-            submissionPanel.onSubmitPressed += CaptureScreenshot;
-            submissionPanel.onSubmitPressed += PackagingSequence;
+            onSubmitPressed += CaptureScreenshot;
+            onSubmitPressed += PackagingSequence;
             onSerializeConfigInfo += SerializeFieldsToJSON;
         }
 
@@ -214,6 +268,7 @@ namespace BetaMax.Core
             if (!File.Exists(logDumpPath))
             { File.Create(logDumpPath); }
         }
+        #endregion
 
         private void Start()
         {
@@ -223,8 +278,7 @@ namespace BetaMax.Core
             //For initial tester info file creation
             if (!File.Exists(infoSaveFilePath))
             {
-                ConfigInfo temp = configPanel.GetConfigInfo();
-                SerializeFieldsToJSON(temp);
+                SerializeFieldsToJSON(configInfo);
             }
         }
 
@@ -374,9 +428,9 @@ namespace BetaMax.Core
                 {
                     using (TextWriter tw = new StreamWriter(fs))
                     {
-                        await tw.WriteLineAsync("Issue Category:\n" + issueCategories[submissionPanel.SelectedIssueCategory]);
-                        await tw.WriteLineAsync("\nIssue Description:\n" + submissionPanel.IssueDescription);
-                        await tw.WriteLineAsync("\nIssue Repsoduction:\n" + submissionPanel.IssueReproduction);
+                        await tw.WriteLineAsync("Issue Category:\n" + issueCategories[submitInfo.selectedIssueCategory]);
+                        await tw.WriteLineAsync("\nIssue Description:\n" + submitInfo.issueDescription);
+                        await tw.WriteLineAsync("\nIssue Repsoduction:\n" + submitInfo.issueReproduction);
                     }
                 }
 
@@ -481,26 +535,51 @@ namespace BetaMax.Core
         {
             if (Input.GetKeyDown(submitPanelKey))
             {
-                submissionPanel.TogglePanel();
-                if (configPanel.IsActive) configPanel.TogglePanel();
+                submissionPanel.SetActive(!submissionPanel.activeInHierarchy);
+                if (configPanel.activeInHierarchy) configPanel.SetActive(false);
 
-                if (submissionPanel.IsActive) { OnIssueCommited(); }
+                if (submissionPanel.activeInHierarchy) { OnIssueCommited(); }
             }
 
             if (Input.GetKeyDown(configPanelKey))
             {
-                configPanel.TogglePanel(true);
-                if (submissionPanel.IsActive) submissionPanel.TogglePanel();
+                configPanel.SetActive(!configPanel.activeInHierarchy);
+                if (submissionPanel.activeInHierarchy) submissionPanel.SetActive(false);
             }
         }
 
         private void OnDestroy()
         {
-            submissionPanel.onSubmitPressed -= CaptureScreenshot;
-            submissionPanel.onSubmitPressed -= PackagingSequence;
+            onSubmitPressed -= CaptureScreenshot;
+            onSubmitPressed -= PackagingSequence;
             onSerializeConfigInfo -= SerializeFieldsToJSON;
             S = null;
         }
+
+        #region UTILITIES
+        ///<summary>Call to validate the optionals path input field text.</summary>
+        public bool ValidateOptionalsPath(string inputPath)
+        {
+            if (String.IsNullOrEmpty(inputPath) || String.IsNullOrWhiteSpace(inputPath))
+            { return true; }
+
+            string lastChar = inputPath.ToCharArray()[inputPath.Length - 1].ToString();
+
+            return (!Regex.IsMatch(lastChar, @"[^A-Za-z0-9\s]")) && (Directory.Exists(inputPath));
+        }
+
+        ///<summary>Returns the tester's deserialized information, can return null.</summary>
+        public TesterInfo GetTesterInfo()
+        { return InfoSerialization.DeserializeJsonToObj(InfoSavePathFinal); }
+
+
+        ///<summary>Feed the configuration panel info to the handler</summary>
+        public void SetConfigInfo(ConfigInfo info)
+        { configInfo = info; }
+
+        ///<summary>Feed the submission panel info to the handler</summary>
+        public void SetSubmitInfo(SubmitInfo info)
+        { submitInfo = info; }
 
         ///<summary>
         /// Shows the passed argument to the debug console if _showDebug is true.
@@ -517,5 +596,6 @@ namespace BetaMax.Core
 
             Debug.Log(msg);
         }
+        #endregion
     }
 }
