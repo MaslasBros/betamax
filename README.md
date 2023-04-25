@@ -1,4 +1,4 @@
-# ![BetaMax Icon](https://raw.githubusercontent.com/MaslasBros/betamax/prod/Docs/betamax.png)
+# ![BetaMax Icon](https://raw.githubusercontent.com/MaslasBros/betamax/main/Docs/betamax.png)
 
 # Table of Contents
 
@@ -28,9 +28,9 @@ A **Unity3D runtime** tool used for beta testing and issue reporting. It support
 
 ## UI Examples provided
 
-![](https://raw.githubusercontent.com/MaslasBros/betamax/prod/Docs/configPanel.png)
+![ConfigPanelUI](https://raw.githubusercontent.com/MaslasBros/betamax/main/Docs/configPanel.png)
 
-![](https://raw.githubusercontent.com/MaslasBros/betamax/prod/Docs/submitPanel.png)
+![SubmitPanelUI](https://raw.githubusercontent.com/MaslasBros/betamax/main/Docs/submitPanel.png)
 
 # Features
 
