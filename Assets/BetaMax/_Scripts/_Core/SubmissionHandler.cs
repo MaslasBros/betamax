@@ -163,7 +163,7 @@ namespace BetaMax.Core
         ///<summary>The path of the log dump file.</summary>
         string logDumpPath = string.Empty;
         ///<summary>The name of the log dump file.</summary>
-        string logDumpFileName = "log.btmdump";
+        string logDumpFileName = "logger.log";
         #endregion
 
         #region PUBLIC_VARS
@@ -197,7 +197,7 @@ namespace BetaMax.Core
         { onSubmitPressed?.Invoke(); }
 
         ///<summary>Subscribe to this event to receive the config info from the configuration panel when raised.</summary>
-        public event Action<ConfigInfo> onSerializeConfigInfo;
+        event Action<ConfigInfo> onSerializeConfigInfo;
         ///<summary>Raises the onSerializeConfigInfo event</summary>
         public void OnSerializeConfigInfo(ConfigInfo info)
         { onSerializeConfigInfo?.Invoke(info); }
@@ -373,6 +373,7 @@ namespace BetaMax.Core
 
             bool uploadResult = false;
 
+            //Grab the tester info
             TesterInfo tempInfo = InfoSerialization.DeserializeJsonToObj(userJsonPath);
             if (tempInfo != null)
             {
@@ -383,11 +384,13 @@ namespace BetaMax.Core
             else
             {
                 Log("No JSON file deserialized!");
+                ShowUploadMessage("Error uploading file.", true);
                 return;
             }
 
             ShowUploadMessage("Uploading...");
 
+            //Start the upload process
             await Task.Run(async () =>
             {
                 //Raise the aux event.
@@ -503,7 +506,7 @@ namespace BetaMax.Core
             }
         }
 
-        ///<summary>Show the appropriate error or success message on tools UI based on the result.</summary>
+        ///<summary>Show the appropriate error or success message on the tools UI based on the result.</summary>
         void HandleUploadResult(bool result)
         {
             if (result)
@@ -513,22 +516,34 @@ namespace BetaMax.Core
         }
         #endregion
 
+        #region UNITY_API
         ///<summary>Renders the passed message to the tools UI text element.</summary>
         public void ShowUploadMessage(string message, bool clearAfter = false)
         {
-            messageText.text = message;
-
-            if (clearAfter)
+            if (messageText != null)
             {
-                StopCoroutine(CloseAfterSeconds());
-                StartCoroutine(CloseAfterSeconds());
+                messageText.text = message;
+
+                if (clearAfter)
+                {
+                    StopCoroutine(CloseAfterSeconds());
+                    StartCoroutine(CloseAfterSeconds());
+                }
             }
+            else
+            { Log("No message Text gameObject attached. Won't show message."); }
         }
 
         IEnumerator CloseAfterSeconds()
         {
             yield return new WaitForSeconds(closeAfterSeconds);
-            messageText.text = string.Empty;
+
+            if (messageText != null)
+            {
+                messageText.text = string.Empty;
+            }
+            else
+            { Log("No message Text gameObject attached. Won't show message."); }
         }
 
         private void Update()
@@ -553,8 +568,10 @@ namespace BetaMax.Core
             onSubmitPressed -= CaptureScreenshot;
             onSubmitPressed -= PackagingSequence;
             onSerializeConfigInfo -= SerializeFieldsToJSON;
+
             S = null;
         }
+        #endregion
 
         #region UTILITIES
         ///<summary>Call to validate the optionals path input field text.</summary>
@@ -583,7 +600,7 @@ namespace BetaMax.Core
 
         ///<summary>
         /// Shows the passed argument to the debug console if _showDebug is true.
-        /// <para>Use this to write the msg to the log dump of the tool</para>
+        /// <para>Use this to write the msg to the log dump of the tool regardless of _showDebug value.</para>
         /// </summary>
         public static void Log(string msg)
         {
