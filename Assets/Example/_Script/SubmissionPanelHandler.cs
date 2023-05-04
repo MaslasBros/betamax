@@ -61,7 +61,6 @@ public class SubmissionPanelHandler : MonoBehaviour
     {
         submitButton.onClick.AddListener(() => SubmissionHandler.S.SetSubmitInfo(GetSubmitInfo()));
         submitButton.onClick.AddListener(() => SubmissionHandler.S.OnSubmitPressed());
-        submitButton.onClick.AddListener(() => gameObject.SetActive(false));
     }
 
     private void Start()

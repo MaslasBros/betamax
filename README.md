@@ -1,5 +1,7 @@
 # ![BetaMax Icon](https://raw.githubusercontent.com/MaslasBros/betamax/main/Docs/betamax.png)
 
+# 
+
 # Table of Contents
 
 * [Description](#description)
@@ -17,12 +19,18 @@
   * [Submission Handler](#the-submission-handler-class)
   
   * [Data Container Structs](#the-data-containers)
+  
+  * [Code Samples](#code-samples)
 
 * [Dependencies](#dependencies)
+
+# 
 
 # Description
 
 A **Unity3D runtime** tool used for beta testing and issue reporting. It supports the HTTP/HTTPS, FTP, SFTP upload protocols. The user with the press of a button can submit his issue to your server with ease and also provides the user with the functionality of adding additional files to the final zipped file that you will receive and  automatically save a copy of his sent info to his device upon uploading. All of this fully customizable and extensible for your use.
+
+# 
 
 # Screenshots
 
@@ -31,6 +39,8 @@ A **Unity3D runtime** tool used for beta testing and issue reporting. It support
 ![ConfigPanelUI](https://raw.githubusercontent.com/MaslasBros/betamax/main/Docs/configPanel.png)
 
 ![SubmitPanelUI](https://raw.githubusercontent.com/MaslasBros/betamax/main/Docs/submitPanel.png)
+
+# 
 
 # Features
 
@@ -51,6 +61,8 @@ HTTP/S uses ***BasicAuth***.
 Inside the package you'll also find a fully set up and functional UI template which you can freely use and modify to your needs.
 
 Located at [Screenshots](#screenshots)
+
+# 
 
 # Unity Folder Structure
 
@@ -98,6 +110,8 @@ graph LR;
     C-->D
 ```
 
+# 
+
 # Tool Flowchart
 
 ```mermaid
@@ -144,6 +158,8 @@ flowchart TD
     if4 --No--> nd
     evnt13 --> nd
 ```
+
+# 
 
 # Base Handler
 
@@ -211,13 +227,113 @@ A log file is also created in the runtime and placed inside the TEMP_FOLDER_NAME
 
 Two structs are used to transfer the panel data to the Submission Handler.
 
-1) ConfigInfo
+1) **ConfigInfo**
 
-2) SubmitInfo
+2) **SubmitInfo**
 
-The SubmissionHandler must know what field data to serialize and to achieve this a ConfigStruct must be passed to the Submission Handler when it's time to save the user's info.
+The SubmissionHandler must know what field data to serialize and to achieve this a **ConfigInfo** struct must be passed to the Submission Handler when it's time to save the user's info. Example:
 
-The submission process follows the same path, when the user wants to upload the data a SubmitInfo struct must be passed to the Submission Handler so the field info can be collected from the interface.
+The submission process follows the same path, when the user wants to upload the data a **SubmitInfo** struct must be passed to the Submission Handler so the field info can be collected from the interface.
+
+## Code Samples
+
+### Logging
+
+The tool logger is accessible from any point of your API with a simple call as that:
+
+```csharp
+SubmissionHandler.Log("YOUR_LOG_MESSAGE_HERE");
+```
+
+Anything that you write in the logger is automatically dumped in the internal log file of the tool too.
+
+### 
+
+### Handler Public Events
+
+```csharp
+    ///<summary>Subscribe to this event to get notified when the user opens the submission form.</summary>
+    public event Action onIssueCommited;
+
+    ///<summary>Subscribe to this event to get notified when the user opens the submission form.</summary>
+    public event Action onIssuePause;
+
+    ///<summary>Raises the onSubmitPressed event</summary>
+    public void OnSubmitPressed()
+    { onSubmitPressed?.Invoke(); }
+
+    ///<summary>An extra proccess which will get executed upon submission.</summary>
+    public event Action onAuxProcessCalled;
+
+   ///<summary>Raises the onSerializeConfigInfo event</summary>
+   public void OnSerializeConfigInfo(ConfigInfo info)
+   { onSerializeConfigInfo?.Invoke(info); }
+```
+
+### Data Containers
+
+ConfigInfo struct usage
+
+```csharp
+    ///<summary>Returns the needed panel's fields inside a data container.</summary>
+    ConfigInfo GetConfigInfo()
+    {
+        ConfigInfo configInfo = new ConfigInfo();
+        configInfo.onIssuePauseValue = onIssuePauseToggle.isOn;
+        configInfo.onSubmitDownloadValue = onSubmitDownloadToggle.isOn;
+
+        configInfo.downloadsPathValue = downloadsPathField.text;
+        configInfo.optionalsPathValue = optionalsPathField.text;
+
+        configInfo.betaTesterValue = betaTester.text;
+        configInfo.osFieldValue = osField.text;
+        configInfo.cpuFieldValue = cpuField.text;
+        configInfo.ramFieldValue = ramField.text;
+        configInfo.svgaFieldValue = svgaField.text;
+
+        return configInfo;
+    }
+
+    //...
+    //...
+    //...
+
+    ///<summary>Creates a ConfigInfo object and sends it through the  SubmissionHandler.OnSerializeConfigInfo event.</summary>
+    void SaveButtonCallback()
+    {
+        //...
+        //...
+        ConfigInfo configInfo = GetConfigInfo();
+        SubmissionHandler.S.OnSerializeConfigInfo(configInfo);
+        //...
+        //...
+    }
+```
+
+SubmitInfo struct usage
+
+```csharp
+    ///<summary>Returns the needed panel's fields inside a data container.</summary>
+    SubmitInfo GetSubmitInfo()
+    {
+        SubmitInfo info = new SubmitInfo();
+
+        info.selectedIssueCategory = issueCategory.value;
+        info.issueDescription = issueDescr.text;
+        info.issueReproduction = stepsToReproduce.text;
+
+        return info;
+    }
+
+    //...
+    //...
+    //...
+
+    void SubmitButtonCallback()
+    {
+        submitButton.onClick.AddListener(() => SubmissionHandler.S.SetSubmitInfo(GetSubmitInfo()));
+    }
+```
 
 # Dependencies
 
