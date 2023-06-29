@@ -510,7 +510,10 @@ namespace BetaMax.Core
         void HandleUploadResult(bool result)
         {
             if (result)
-            { ShowUploadMessage("File uploaded successfully.", true); }
+            {
+                ShowUploadMessage("File uploaded successfully.", true);
+                submissionPanel.SetActive(false);
+            }
             else
             { ShowUploadMessage("Error uploading file.", true); }
         }
